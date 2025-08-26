@@ -1,6 +1,15 @@
 # Automated Testing Suite
 
-Suite de pruebas automatizadas para pruebas end to end, pruebas críticas, así como pruebas de API.
+Este repositorio contiene una suite de pruebas automatizadas diseñada para validar la funcionalidad, rendimiento y confiabilidad de aplicaciones. Incluye:
+
+Pruebas End-to-End (E2E): Simulan el flujo completo de usuario, asegurando que todas las partes del sistema interactúan correctamente.
+
+Pruebas Críticas: Enfocadas en los componentes y escenarios más relevantes para el negocio, garantizando la estabilidad en las funcionalidades clave.
+Pruebas de API: Validación de endpoints, respuestas, esquemas y lógica de negocio, asegurando la integridad y consistencia de los servicios backend.
+
+Objetivo:
+Automatizar la detección de errores, reducir el tiempo de prueba manual y mejorar la calidad del software mediante la ejecución continua y repetible de casos de prueba.
+Tecnologías/Frameworks: (Aquí puedes mencionar las herramientas que uses, por ejemplo: Selenium, Cypress, Postman, Jest, etc.)
 
 ## Configuración del Repositorio
 

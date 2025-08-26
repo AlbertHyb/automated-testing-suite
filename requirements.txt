@@ -1,0 +1,16 @@
+# Dependencias para la automatización de pruebas
+selenium==4.15.0
+pytest==7.4.3
+pytest-html==4.1.1             # Generador de reportes HTML para pytest
+pytest-xdist==3.3.1            # Para ejecutar pruebas en paralelo
+requests==2.31.0               # Para realizar peticiones HTTP
+webdriver-manager==4.0.1
+python-dotenv==1.0.0           # Para cargar variables de entorno desde un archivo .env
+
+# Behave y dependencias relacionadas
+behave==1.2.6                  # Framework BDD
+behave-html-formatter==0.9.10  # Para generar reportes HTML
+allure-behave==2.13.2         # Para generar reportes Allure
+requests==2.31.0              # Para pruebas de API
+jsonschema==4.19.0            # Para validación de esquemas JSON
+PyHamcrest==2.0.4            # Para assertions más expresivas
