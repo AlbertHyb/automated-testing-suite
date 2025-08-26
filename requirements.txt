@@ -8,7 +8,9 @@ webdriver-manager==4.0.1
 python-dotenv==1.0.0           # Para cargar variables de entorno desde un archivo .env
 
 # Behave y dependencias relacionadas
-behave==1.2.6                  # Framework BDD
+pytest==8.0.0
+pytest-html==4.1.1
+requests==2.31.0                  # Framework BDD
 behave-html-formatter==0.9.10  # Para generar reportes HTML
 allure-behave==2.13.2         # Para generar reportes Allure
 requests==2.31.0              # Para pruebas de API
