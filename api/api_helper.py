@@ -7,11 +7,7 @@ class ApiHelper:
     URL_API = "https://cf-automation-airline-api.onrender.com/"
 
     def __init__(self, token=None):
-        """
-        Inicializa el helper con un token opcional
-        Args:
-            token (str, optional): Token de autorización
-        """
+        
         self.token = token
         self.headers = {}
         self.last_response = None
@@ -19,24 +15,12 @@ class ApiHelper:
             self.set_token(token)
     
     def set_token(self, token):
-        """
-        Actualiza el token de autorización
-        Args:
-            token (str): Nuevo token
-        """
+        
         self.token = token
         self.headers["Authorization"] = f"Bearer {token}"
     
     def make_request(self, endpoint, method="POST", data=None):
-        """
-        Realiza una petición HTTP
-        Args:
-            endpoint (str): Endpoint de la API
-            method (str): Método HTTP (GET, POST, etc)
-            data (dict): Datos para enviar en el cuerpo de la petición
-        Returns:
-            requests.Response: Objeto de respuesta
-        """
+      
         url = f"{self.URL_API}{endpoint}"
         self.last_response = requests.request(
             method=method,
@@ -47,19 +31,11 @@ class ApiHelper:
         return self.last_response
     
     def get_last_response(self):
-        """
-        Obtiene la última respuesta recibida
-        Returns:
-            requests.Response: Última respuesta recibida
-        """
+        
         return self.last_response
     
     def is_service_up(self):
-        """
-        Verifica si el servicio API está funcionando.
-        Returns:
-            bool: True si el servicio responde, False si no.
-        """
+        
         try:
             response = requests.get(self.URL_API)
             return response.status_code == 200
