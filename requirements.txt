@@ -3,6 +3,7 @@ selenium==4.15.0
 requests==2.31.0               # Para realizar peticiones HTTP
 webdriver-manager==4.0.1
 python-dotenv==1.0.0           # Para cargar variables de entorno desde un archivo .env
+Faker==22.2.0                 # Para generar datos de prueba aleatorios
 
 # Pytest y dependencias relacionadas
 pytest==8.0.0
