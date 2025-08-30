@@ -15,12 +15,12 @@ jobs:
       fail-fast: false  # Permite que otras pruebas continúen si una falla
 
     steps:
-    - uses: actions/checkout@v3  # Actualizando a v3
+    - uses: actions/checkout@v4  # Actualizando también checkout a v4
       with:
         fetch-depth: 0  # Para tener acceso al historial completo
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4  # Actualizando a v4
+      uses: actions/setup-python@v5  # Actualizando a v5 que es la más reciente
       with:
         python-version: ${{ matrix.python-version }}
         cache: 'pip'  # Habilitando caché de dependencias
@@ -44,8 +44,10 @@ jobs:
 
     - name: Upload test results
       if: always()
-      uses: actions/upload-artifact@v3  # Actualizando a v3
+      uses: actions/upload-artifact@v4  # Usando la versión más reciente
       with:
         name: test-results-${{ matrix.python-version }}
         path: reports/
+        retention-days: 30  # Agregando retención explícita
         if-no-files-found: error
+        compression-level: 6  # Optimizando la compresión
