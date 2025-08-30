@@ -1,13 +1,11 @@
 import os
 import json
+import time  # Añadiendo importación de time
 import requests
 import pytest
 from typing import Dict
 from dotenv import load_dotenv
-
-import random
-import string
-from faker import Faker
+from api.api_helper import ApiHelper
 
 # Cargar variables de entorno
 load_dotenv()
@@ -17,6 +15,43 @@ BASE_URL = "https://cf-automation-airline-api.onrender.com"
 @pytest.fixture(scope="session")
 def base_url() -> str:
     return BASE_URL
+
+@pytest.fixture(scope="module")
+def api_client(base_url):
+    """Fixture centralizado para crear un cliente de API para las pruebas."""
+    api_client = ApiHelper(base_url)
+
+    if not api_client.is_service_up():
+        pytest.skip("El servicio API no está disponible")
+    print("Servicio API disponible")
+
+    return api_client
+
+@pytest.fixture(scope="module")
+def test_user(api_client):
+    """Fixture compartido que proporciona un usuario de prueba para los tests."""
+    timestamp = int(time.time())
+    user_data = {
+        "email": f"alberto_sanchez{timestamp}@otlook.com",
+        "password": "t7O331\a{m<&",
+        "full_name": "Alberto Sanchez"
+    }
+
+    # Registrar usuario para pruebas
+    signup_response = api_client.make_request(
+        endpoint="auth/signup",
+        method="POST",
+        data=user_data
+    )
+
+    if signup_response.status_code != 201:
+        pytest.fail(f"No se pudo crear el usuario de prueba: {signup_response.text}")
+    print(f"Usuario de prueba creado: {user_data['email']}")
+
+    yield user_data
+
+    # Aquí se podría añadir código para limpiar el usuario después de las pruebas
+    # si la API proporciona un endpoint para eliminar usuarios
 
 """Fixture que proporciona el token de administrador"""
 @pytest.fixture(scope="session")
@@ -36,7 +71,8 @@ def admin_token() -> str:
         print(f"Login data: {login_data}")  # Para ver qué datos se están enviando
         response = requests.post(
             f"{BASE_URL}/auth/login",
-            data=login_data
+            json=login_data,  # ← Cambio aquí
+            headers={"Content-Type": "application/json"}
         )
         print(f"Login response ({response.status_code}): {response.text}")
         
@@ -165,9 +201,3 @@ def dynamic_airport(auth_headers):
         headers=auth_headers, 
         timeout=5
     )
-
-
-
-
-
-

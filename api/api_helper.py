@@ -7,7 +7,6 @@ class ApiHelper:
     URL_API = "https://cf-automation-airline-api.onrender.com/"
 
     def __init__(self, token=None):
-        
         self.token = token
         self.headers = {}
         self.last_response = None
@@ -15,19 +14,36 @@ class ApiHelper:
             self.set_token(token)
     
     def set_token(self, token):
-        
         self.token = token
         self.headers["Authorization"] = f"Bearer {token}"
     
-    def make_request(self, endpoint, method="POST", data=None):
-      
+    def make_request(self, endpoint, method="POST", data=None, use_form_data=False):
+        """
+        Realiza una petición HTTP
+
+        :param endpoint: El endpoint de la API
+        :param method: Método HTTP (GET, POST, etc)
+        :param data: Datos a enviar
+        :param use_form_data: Si True, envía los datos como form-data en lugar de JSON
+        :return: Respuesta de la petición
+        """
         url = f"{self.URL_API}{endpoint}"
-        self.last_response = requests.request(
-            method=method,
-            url=url,
-            headers=self.headers,
-            json=data
-        )
+
+        # Configurar los datos según el formato requerido
+        request_kwargs = {
+            "method": method,
+            "url": url,
+            "headers": self.headers.copy()
+        }
+
+        if data:
+            if use_form_data:
+                request_kwargs["data"] = data
+                request_kwargs["headers"]["Content-Type"] = "application/x-www-form-urlencoded"
+            else:
+                request_kwargs["json"] = data
+
+        self.last_response = requests.request(**request_kwargs)
         return self.last_response
     
     def get_last_response(self):
@@ -62,4 +78,4 @@ if __name__ == "__main__":
         print(f"Status Code: {response.status_code}")
         print(f"Response: {response.json()}")
     else:
-        print("El servicio API no está disponible en este momento")            
+        print("El servicio API no está disponible en este momento")

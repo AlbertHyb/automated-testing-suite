@@ -6,7 +6,7 @@ python-dotenv==1.0.0           # Para cargar variables de entorno desde un archi
 Faker==22.2.0                 # Para generar datos de prueba aleatorios
 
 # Pytest y dependencias relacionadas
-pytest==8.0.0
+pytest==8.4.1
 pytest-xdist==3.3.1            # Para ejecutar pruebas en paralelo                 
 pytest-html==4.1.1            # Para reportes en HTML para pytest
 requests==2.31.0              # Para pruebas de API

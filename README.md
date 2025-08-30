@@ -1,146 +1,101 @@
 # Automated Testing Suite
 
-Este repositorio contiene una suite de pruebas automatizadas diseñada para validar la funcionalidad, rendimiento y confiabilidad de aplicaciones. Incluye:
+## Descripción
+Suite de pruebas automatizadas para validar la funcionalidad de la API de autenticación y aeropuertos. Incluye pruebas de:
+- Autenticación (login/signup)
+- Gestión de aeropuertos
+- Validaciones de esquemas JSON
 
-Pruebas End-to-End (E2E): Simulan el flujo completo de usuario, asegurando que todas las partes del sistema interactúan correctamente.
+## Requisitos Previos
+- Python 3.8 o superior
+- pip (gestor de paquetes de Python)
+- Acceso a la API (cf-automation-airline-api.onrender.com)
 
-Pruebas Críticas: Enfocadas en los componentes y escenarios más relevantes para el negocio, garantizando la estabilidad en las funcionalidades clave.
-Pruebas de API: Validación de endpoints, respuestas, esquemas y lógica de negocio, asegurando la integridad y consistencia de los servicios backend.
+## Instalación
 
-Objetivo:
-Automatizar la detección de errores, reducir el tiempo de prueba manual y mejorar la calidad del software mediante la ejecución continua y repetible de casos de prueba.
-Tecnologías/Frameworks: (Aquí puedes mencionar las herramientas que uses, por ejemplo: Selenium, Cypress, Postman, Jest, etc.)
-
-## Configuración del Repositorio
-
-### Clonar el Repositorio
+1. Clonar el repositorio:
 ```bash
-# Clonar el repositorio
-git clone https://github.com/AlbertHyb/automated-testing-suite.git
-
-# Entrar al directorio del proyecto
+git clone https://github.com/tuusuario/automated-testing-suite.git
 cd automated-testing-suite
 ```
 
-### Configuración Inicial
+2. Crear y activar entorno virtual:
 ```bash
-# Crear y activar entorno virtual
 python -m venv venv
-source venv/bin/activate  # En Linux/Mac
+source venv/bin/activate  # Linux/Mac
 # o
-venv\Scripts\activate  # En Windows
+venv\Scripts\activate     # Windows
+```
 
-# Instalar dependencias
+3. Instalar dependencias:
+```bash
 pip install -r requirements.txt
 ```
 
-## Flujo de Trabajo con Ramas
-
-El proyecto sigue un modelo de ramificación basado en GitFlow:
-
-### Ramas Principales
-- `main`: Rama principal que contiene código estable y pruebas verificadas
-- `develop`: Rama de desarrollo donde se integran nuevas características
-
-### Ramas de Características
-Para trabajar en nuevas características o conjuntos de pruebas:
-
-1. Crear rama desde `develop`:
+4. Configurar variables de entorno:
 ```bash
-git checkout develop
-git pull origin develop
-git checkout -b feature/nombre-caracteristica
+cp .env.example .env
+# Editar .env con tus credenciales
 ```
-
-2. Trabajar en la nueva característica y hacer commits:
-```bash
-git add .
-git commit -m "Descripción del cambio"
-```
-
-3. Subir cambios al repositorio remoto:
-```bash
-git push origin feature/nombre-caracteristica
-```
-
-4. Cuando la característica esté lista, crear un Pull Request a `develop`
-
-### Convenciones de Nombres para Ramas
-- `feature/*`: Para nuevas características o conjuntos de pruebas
-- `fix/*`: Para correcciones de pruebas existentes
-- `hotfix/*`: Para correcciones urgentes en producción
-- `test/*`: Para experimentar con nuevos frameworks o enfoques de pruebas
-
-### Buenas Prácticas
-1. Mantener las ramas actualizadas con `develop`:
-```bash
-git checkout develop
-git pull origin develop
-git checkout tu-rama
-git merge develop
-```
-
-2. Hacer commits frecuentes y descriptivos
-3. Crear Pull Requests para revisión de código
-4. Eliminar ramas después de integrarlas
-
-## Configuración en PyCharm
-
-### Abrir el Proyecto
-1. Abrir PyCharm
-2. Seleccionar `File > Open`
-3. Navegar hasta la carpeta del proyecto y seleccionar `automated-testing-suite`
-4. Esperar a que PyCharm indexe el proyecto
-
-### Configurar el Intérprete de Python
-1. Ir a `File > Settings` (Windows/Linux) o `PyCharm > Preferences` (macOS)
-2. Navegar a `Project: automated-testing-suite > Python Interpreter`
-3. Hacer clic en el engranaje ⚙️ > `Add`
-4. Seleccionar `Virtual Environment > Existing Environment`
-5. Buscar el intérprete en:
-   - Windows: `automated-testing-suite\venv\Scripts\python.exe`
-   - Linux/Mac: `automated-testing-suite/venv/bin/python`
-6. Hacer clic en `OK` para confirmar
-
-### Configurar Test Runner
-1. Ir a `File > Settings` (Windows/Linux) o `PyCharm > Preferences` (macOS)
-2. Navegar a `Tools > Python Integrated Tools`
-3. En la sección `Testing`, seleccionar `pytest` como Default test runner
-4. Hacer clic en `OK` para confirmar
-
-### Configurar Git en PyCharm
-1. Ir a `VCS > Git > Remotes`
-2. Verificar que el remote 'origin' apunte a nuestro repositorio
-3. Para cambiar de rama:
-   - Usar el widget de Git en la esquina inferior derecha
-   - O `Git > Branches > New Branch`
-
-### Ejecutar Tests
-1. Click derecho en la carpeta `test`
-2. Seleccionar `Run 'pytest in test'`
-3. Para un archivo específico:
-   - Click derecho en el archivo
-   - Seleccionar `Run 'pytest in nombre_archivo.py'`
-
-### Consejos Útiles
-1. Usar `Shift + F10` para reejecutar el último test
-2. `Alt + Enter` sobre una importación para instalar paquetes faltantes
-3. `Ctrl + Alt + L` (Windows/Linux) o `Cmd + Alt + L` (macOS) para formatear código
-4. `Shift + F6` para renombrar archivos y símbolos de forma segura
-
-### Plugins Recomendados
-1. `.env files support`
-2. `Requirements`
-3. `GitToolBox`
-4. `Python Security`
 
 ## Estructura del Proyecto
 ```
 automated-testing-suite/
-├── api/          # Pruebas de API
-├── config/       # Configuraciones y variables de entorno
-├── pages/        # Page Objects para pruebas UI
-├── reports/      # Reportes de pruebas
-├── test/         # Suites de pruebas
-└── utils/        # Utilidades y helpers
+├── api/                    # Helpers y utilidades para API
+├── config/                 # Configuraciones
+├── test/
+│   ├── api/               # Pruebas de API
+│   │   ├── schemas/       # Esquemas JSON
+│   │   ├── auth_login.py  # Pruebas de login
+│   │   ├── auth_signup.py # Pruebas de registro
+│   │   └── test_airports.py
+│   └── ui/                # Pruebas de UI (si aplica)
+├── utils/                 # Utilidades generales
+└── requirements.txt       # Dependencias
 ```
+
+## Ejecución de Pruebas
+
+### Todas las pruebas:
+```bash
+pytest
+```
+
+### Pruebas específicas:
+```bash
+# Pruebas de autenticación
+pytest test/api/auth_login.py -v
+pytest test/api/auth_signup.py -v
+
+# Pruebas de aeropuertos
+pytest test/api/test_airports.py -v
+```
+
+### Generar reporte HTML:
+```bash
+pytest --html=reports/report.html
+```
+
+## Escenarios Cubiertos
+
+### Autenticación
+- Login exitoso
+- Credenciales inválidas
+- Campos faltantes
+- Formatos inválidos
+
+### Aeropuertos
+- Creación exitosa
+- Validación de códigos IATA
+- Manejo de duplicados
+- Actualizaciones y eliminaciones
+
+## Contribución
+1. Fork el repositorio
+2. Crear rama feature: `git checkout -b feature/nueva-caracteristica`
+3. Commit cambios: `git commit -am 'Añadir nueva característica'`
+4. Push a la rama: `git push origin feature/nueva-caracteristica`
+5. Crear Pull Request
+
+## Licencia
+MIT License - ver [LICENSE](LICENSE) para más detalles.

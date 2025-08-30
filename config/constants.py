@@ -14,3 +14,4 @@ ENDPOINTS = {
     'FLIGHTS': '/flights',
     'BOOKINGS': '/bookings'
 }
+
