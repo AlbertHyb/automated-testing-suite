@@ -7,9 +7,9 @@ from test.api.schemas.login_schemas import user_login_success_schema, user_login
 def test_service_status(api_client):
     """Verifica que el servicio esté disponible antes de ejecutar las pruebas."""
     if api_client.is_service_up():
-        print("✅ El servicio API está funcionando correctamente")
+        print("El servicio API está funcionando correctamente")
     else:
-        pytest.fail("❌ El servicio API no está disponible")
+        pytest.fail("El servicio API no está disponible")
 
 def test_user_login_successful(api_client, test_user):
     """Test para verificar el login exitoso de un usuario."""
@@ -42,7 +42,7 @@ def test_user_login_successful(api_client, test_user):
     assert json_response["token_type"].lower() == "bearer", "El token_type no es 'bearer'"
     assert len(json_response["access_token"]) > 0, "Token vacío"
 
-    print(f"✅ Login exitoso para: {login_data['username']}")
+    print(f"Login exitoso para: {login_data['username']}")
 
 def test_login_invalid_credentials(api_client):
     """Test para verificar el manejo de credenciales inválidas."""
@@ -66,7 +66,7 @@ def test_login_invalid_credentials(api_client):
     assert response.status_code == HTTPStatus.UNAUTHORIZED, \
         f"Se esperaba código 401 pero se recibió {response.status_code}"
 
-    print("✅ Validación de credenciales inválidas correcta")
+    print("Validación de credenciales inválidas correcta")
 
 def test_login_missing_fields(api_client):
     """Test para verificar el manejo de campos faltantes."""
@@ -95,7 +95,7 @@ def test_login_missing_fields(api_client):
     error_fields = [error["loc"][1] for error in json_response["detail"]]
     assert "password" in error_fields, "No se reportó error por falta de password"
 
-    print("✅ Validación de campos requeridos correcta")
+    print("Validación de campos requeridos correcta")
 
 def test_login_invalid_format(api_client):
     """Test para verificar el manejo de datos con formato inválido."""
@@ -121,4 +121,4 @@ def test_login_invalid_format(api_client):
     json_response = response.json()
     validate(instance=json_response, schema=user_login_error_schema)
 
-    print("✅ Validación de formato de datos correcta")
+    print("Validación de formato de datos correcta")
