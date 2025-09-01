@@ -23,9 +23,9 @@ def admin_api_client(api_client, admin_token):
 def test_service_status(api_client):
     """Verifica que el servicio esté disponible antes de ejecutar las pruebas."""
     if api_client.is_service_up():
-        print("✅ El servicio API está funcionando correctamente")
+        print("El servicio API está funcionando correctamente")
     else:
-        pytest.fail("❌ El servicio API no está disponible")
+        pytest.fail("El servicio API no está disponible")
 
 
 def test_create_user_as_admin(admin_api_client):

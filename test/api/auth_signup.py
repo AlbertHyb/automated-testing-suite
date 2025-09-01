@@ -1,5 +1,6 @@
 import pytest
 import time
+import os
 from http import HTTPStatus
 from jsonschema import validate, ValidationError
 from api.api_helper import ApiHelper
@@ -10,6 +11,33 @@ def api_client(base_url):
     """Fixture para crear un cliente de API para las pruebas de autenticación."""
     # La URL base se pasa desde la fixture en conftest.py
     return ApiHelper(base_url)
+
+@pytest.fixture(scope="module", autouse=True)
+def signup_service_status(api_client):
+    """Fixture para evaluar el servicio /auth/signup antes de los tests."""
+    # Tomar datos de .env para evitar exponer credenciales
+    email = os.environ.get("SIGNUP_STATUS_EMAIL", "test_status_check@gmail.com")
+    password = os.environ.get("SIGNUP_STATUS_PASS", "Test1234!")
+    full_name = os.environ.get("SIGNUP_STATUS_NAME", "Status Check")
+    signup_data = {
+        "email": email,
+        "password": password,
+        "full_name": full_name
+    }
+    try:
+        response = api_client.make_request(
+            endpoint="auth/signup",
+            method="POST",
+            data=signup_data
+        )
+        print(f"Status Code: {response.status_code}")
+        try:
+            print(f"Response: {response.json()}")
+        except Exception:
+            print(f"Response: {response.text}")
+    except Exception as e:
+        print("El servicio API no está disponible en este momento")
+        print(f"Error: {e}")
 
 def test_user_registration_successful(api_client):
     """Test para verificar el registro exitoso de un usuario"""

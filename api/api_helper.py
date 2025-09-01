@@ -1,4 +1,5 @@
 import requests
+import time
 
 
 class ApiHelper:
@@ -62,20 +63,21 @@ class ApiHelper:
 if __name__ == "__main__":
     token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c3ItMWE5ZGFhNGYiLCJyb2xlIjoiYWRtaW4ifQ.hOxNwvee5q51zlMsKrCqO1bf8QL8fMLnwV8dzBNb0AE"
     api = ApiHelper(token)
-    
-    # Verificar si el servicio está activo
-    if api.is_service_up():
-        print("El servicio API está funcionando correctamente")
-        
+
+    # Fixture: Verificar si el servicio está activo y medir tiempo de respuesta
+    start_time = time.time()
+    service_up = api.is_service_up()
+    response_time = time.time() - start_time
+    if service_up:
+        print(f"El servicio API está funcionando correctamente. Tiempo de respuesta: {response_time:.3f} segundos")
         # Datos para el registro
         signup_data = {
             "email": "test@example.com",
             "password": "Test123!",
             "full_name": "Test User"
         }
-        
         response = api.make_request("/auth/signup", data=signup_data)
         print(f"Status Code: {response.status_code}")
         print(f"Response: {response.json()}")
     else:
-        print("El servicio API no está disponible en este momento")
+        print(f"El servicio API no está disponible en este momento. Tiempo de respuesta: {response_time:.3f} segundos")
