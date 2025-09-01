@@ -11,31 +11,43 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8, 3.9, '3.10']
+        python-version: ['3.12']  # Actualizando a la versión que estamos usando
+      fail-fast: false  # Permite que otras pruebas continúen si una falla
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4  # Actualizando también checkout a v4
+      with:
+        fetch-depth: 0  # Para tener acceso al historial completo
 
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v5  # Actualizando a v5 que es la más reciente
       with:
         python-version: ${{ matrix.python-version }}
+        cache: 'pip'  # Habilitando caché de dependencias
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        pip install pytest-github-actions-annotate-failures  # Para mejor reporte de errores
+
+    - name: Create reports directory
+      run: mkdir -p reports
 
     - name: Run tests
       env:
         ADMIN_USER: ${{ secrets.ADMIN_USER }}
         ADMIN_PASS: ${{ secrets.ADMIN_PASS }}
+        PYTHONPATH: ${{ github.workspace }}
       run: |
         pytest -v --html=reports/report.html --self-contained-html
 
     - name: Upload test results
       if: always()
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4  # Usando la versión más reciente
       with:
-        name: test-results
-        path: reports/report.html
+        name: test-results-${{ matrix.python-version }}
+        path: reports/
+        retention-days: 30  # Agregando retención explícita
+        if-no-files-found: error
+        compression-level: 6  # Optimizando la compresión

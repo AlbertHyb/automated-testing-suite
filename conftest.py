@@ -1,11 +1,12 @@
 import os
 import json
-import time  # Añadiendo importación de time
+import time
 import requests
 import pytest
 from typing import Dict
 from dotenv import load_dotenv
 from api.api_helper import ApiHelper
+import datetime
 
 # Cargar variables de entorno
 load_dotenv()
@@ -27,177 +28,54 @@ def api_client(base_url):
 
     return api_client
 
-@pytest.fixture(scope="module")
-def test_user(api_client):
-    """Fixture compartido que proporciona un usuario de prueba para los tests."""
-    timestamp = int(time.time())
-    user_data = {
-        "email": f"alberto_sanchez{timestamp}@otlook.com",
-        "password": "t7O331\a{m<&",
-        "full_name": "Alberto Sanchez"
-    }
-
-    # Registrar usuario para pruebas
-    signup_response = api_client.make_request(
-        endpoint="auth/signup",
-        method="POST",
-        data=user_data
-    )
-
-    if signup_response.status_code != 201:
-        pytest.fail(f"No se pudo crear el usuario de prueba: {signup_response.text}")
-    print(f"Usuario de prueba creado: {user_data['email']}")
-
-    yield user_data
-
-    # Aquí se podría añadir código para limpiar el usuario después de las pruebas
-    # si la API proporciona un endpoint para eliminar usuarios
-
-"""Fixture que proporciona el token de administrador"""
 @pytest.fixture(scope="session")
 def admin_token() -> str:
-    username = os.getenv("ADMIN_USER") 
+    username = os.getenv("ADMIN_USER")
     password = os.getenv("ADMIN_PASS")
-    print(f"\nUsername: {username}")
-    print(f"Password: {password}")
-    
+
     login_data = {
+        "grant_type": "password",
         "username": username,
-        "password": password
+        "password": password,
+        "scope": "read write",
+        "client_id": "test_client",
+        "client_secret": "test_secret"
     }
-    
+
     try:
-        print("\nIntentando login...")
-        print(f"Login data: {login_data}")  # Para ver qué datos se están enviando
+        print("\nIntentando login de admin...")
         response = requests.post(
             f"{BASE_URL}/auth/login",
-            json=login_data,  # ← Cambio aquí
-            headers={"Content-Type": "application/json"}
+            data=login_data,
+            headers={"Content-Type": "application/x-www-form-urlencoded"}
         )
         print(f"Login response ({response.status_code}): {response.text}")
-        
-        # Verificar respuesta
-        response.raise_for_status()
+
+        if response.status_code != 200:
+            pytest.fail(f"Error en login de admin: {response.text}")
+
         token = response.json().get("access_token")
-        
         if not token:
             pytest.fail("No se encontró el token en la respuesta")
-            
+
+        print("Login de admin exitoso")
         return token
-        
-    except requests.RequestException as e:
-        pytest.fail(f"Error al obtener el token: {str(e)}")
-    except json.JSONDecodeError as e:
-        pytest.fail(f"Error al decodificar la respuesta: {str(e)}")
-        
 
-"""Fixture que proporciona los headers de autenticación"""
-@pytest.fixture(scope="session")
-def auth_headers(admin_token) -> Dict[str, str]:
-    
-    return {"Authorization": f"Bearer {admin_token}"}
+    except Exception as e:
+        pytest.fail(f"Error al obtener el token de admin: {str(e)}")
 
-@pytest.fixture(scope="session")
-def airports_data() -> dict:
-    """Fixture que proporciona datos estáticos para pruebas de aeropuertos"""
-    return {
-        "valid_airports": [
-            {
-                "iata_code": "SCL",
-                "city": "Santiago",
-                "country": "CL"
-            },
-            {
-                "iata_code": "LIM",
-                "city": "Lima",
-                "country": "PE"
-            },
-            {
-                "iata_code": "BOG",
-                "city": "Bogota",
-                "country": "CO"
-            },
-            {
-                "iata_code": "MEX",
-                "city": "Ciudad de Mexico",
-                "country": "MX"
-            }
-        ],
-        "invalid_airports": [
-            {
-                "iata_code": "INVALID",  # Más de 3 caracteres
-                "city": "Invalid City",
-                "country": "XX"
-            },
-            {
-                "iata_code": "12",  # Menos de 3 caracteres
-                "city": "Invalid City",
-                "country": "XX"
-            },
-            {
-                "iata_code": "123",  # Números en lugar de letras
-                "city": "Invalid City",
-                "country": "XX"
-            }
-        ],
-        "update_data": {
-            "city": "Ciudad Actualizada",
-            "country": "AR"
-        }
-    }
+def pytest_terminal_summary(terminalreporter, exitstatus, config):
+    """Hook para generar reportes específicos cuando hay fallos"""
+    failed = bool(terminalreporter.stats.get("failed"))
+    if failed:
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        report_path = f"reports/failures_{timestamp}.html"
 
-@pytest.fixture
-def static_airport(auth_headers, airports_data):
-    """Fixture que proporciona un aeropuerto de prueba con datos estáticos y lo limpia después"""
-    AIRPORTS_ENDPOINT = "/airports"
-    
-    # Usar el primer aeropuerto válido de nuestros datos estáticos
-    airport_data = airports_data["valid_airports"][0]
-
-    response = requests.post(
-        f"{BASE_URL}{AIRPORTS_ENDPOINT}", 
-        json=airport_data, 
-        headers=auth_headers, 
-        timeout=5
-    )
-    response.raise_for_status()
-    airport_response = response.json()
-    
-    yield airport_response
-    
-    # Limpieza: eliminar el aeropuerto creado
-    requests.delete(
-        f"{BASE_URL}{AIRPORTS_ENDPOINT}/{airport_response['iata_code']}", 
-        headers=auth_headers, 
-        timeout=5
-    )
-
-@pytest.fixture
-def dynamic_airport(auth_headers):
-    """Fixture que proporciona un aeropuerto de prueba con datos dinámicos y lo limpia después"""
-    fake = Faker()
-    AIRPORTS_ENDPOINT = "/airports"
-    
-    airport_data = {
-        "iata_code": "".join(random.choices(string.ascii_uppercase, k=3)),
-        "city": fake.city(),
-        "country": fake.country_code()
-    }
-
-    response = requests.post(
-        f"{BASE_URL}{AIRPORTS_ENDPOINT}", 
-        json=airport_data, 
-        headers=auth_headers, 
-        timeout=5
-    )
-    response.raise_for_status()
-    airport_response = response.json()
-    
-    yield airport_response
-    
-    # Limpieza: eliminar el aeropuerto creado
-    requests.delete(
-        f"{BASE_URL}{AIRPORTS_ENDPOINT}/{airport_response['iata_code']}", 
-        headers=auth_headers, 
-        timeout=5
-    )
+        # Re-ejecutar las pruebas fallidas con reporte detallado
+        pytest.main([
+            "--html=" + report_path,
+            "--self-contained-html",
+            "--tb=long",
+            "--showlocals",
+            "--last-failed"
+        ])
